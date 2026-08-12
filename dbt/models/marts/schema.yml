@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: fct_customer_summary
+    description: >
+      One row per customer, summarizing total spend, total rewards
+      earned, and a spend-based ranking across all customers.
+    columns:
+      - name: customer_id
+        description: Unique identifier for the customer. Primary key of this table.
+        tests:
+          - unique
+          - not_null
+      - name: total_spent
+        description: Sum of all transaction amounts for this customer.
+      - name: total_rewards
+        description: Sum of all reward points earned by this customer.
+      - name: spend_rank
+        description: This customer's rank by total_spent, 1 being the highest spender.
+        tests:
+          - not_null

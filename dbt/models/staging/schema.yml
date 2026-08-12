@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_events
+    description: >
+      Cleaned event log. Parses the raw events.value column (a JSON-like
+      string) into structured offer_id, amount, and reward fields.
+    columns:
+      - name: customer_id
+        description: Unique identifier for the customer who triggered the event.
+        tests:
+          - not_null
+      - name: event
+        description: >
+          The event type: one of "offer received", "offer viewed",
+          "transaction", or "offer completed".
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['offer received', 'offer viewed', 'transaction', 'offer completed']
+      - name: offer_id
+        description: The offer this event relates to, if any (null for transactions).
+      - name: amount
+        description: Dollar amount spent, populated only for transaction events.
+      - name: reward
+        description: Reward points earned, populated only for offer completed events.
