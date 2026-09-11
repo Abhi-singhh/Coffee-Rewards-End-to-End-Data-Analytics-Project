@@ -1,5 +1,7 @@
 # Coffee Rewards - End-to-End Data Analytics Project
 
+![dbt CI](https://github.com/Abhi-singhh/Coffee-Rewards-End-to-End-Data-Analytics-Project/actions/workflows/dbt-ci.yml/badge.svg)
+
 An end-to-end analysis of a coffee loyalty rewards program: 17,000 customers,
 306,000+ tracked events, and 10 promotional offers. The project covers the
 full pipeline from raw data to business-ready insights, in two parallel
