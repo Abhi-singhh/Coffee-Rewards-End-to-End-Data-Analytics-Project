@@ -1,0 +1,64 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dbt/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'dbt/**'
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt-bigquery
+        run: pip install dbt-bigquery
+
+      - name: Write GCP service account key
+        run: echo '${{ secrets.GCP_SA_KEY }}' > $HOME/gcp-key.json
+
+      - name: Write dbt profiles.yml
+        run: |
+          mkdir -p $HOME/.dbt
+          cat <<PROFILE > $HOME/.dbt/profiles.yml
+          coffee_rewards_dbt:
+            target: ci
+            outputs:
+              ci:
+                type: bigquery
+                method: service-account
+                project: coffee-rewards-dbt
+                dataset: dbt_dev
+                keyfile: $HOME/gcp-key.json
+                threads: 4
+                timeout_seconds: 300
+                location: US
+          PROFILE
+
+      - name: dbt debug (connection check)
+        working-directory: ./dbt
+        run: dbt debug
+
+      - name: dbt seed
+        working-directory: ./dbt
+        run: dbt seed
+
+      - name: dbt run
+        working-directory: ./dbt
+        run: dbt run
+
+      - name: dbt test
+        working-directory: ./dbt
+        run: dbt test
